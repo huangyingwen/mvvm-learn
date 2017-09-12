@@ -14,12 +14,12 @@ describe('Observable', function (done) {
 
     let name = '黑胖子'
 
-    observable.subscribe('name', val => {
-      expect(val).to.be.equal(name)
+    observable.subscribe('name', () => {
+      expect(observable.data.name).to.be.equal(name)
     })
 
     observable.subscribe('name', val => {
-      expect(val).to.be.equal(name)
+      expect(observable.data.name).to.be.equal(name)
       done()
     })
 
@@ -42,11 +42,11 @@ describe('Observable', function (done) {
     let lastName = '胖子'
 
     observable.subscribe('lastName', val => {
-      expect(val).to.be.equal(observable.data.lastName)
+      expect(observable.data.lastName).to.be.equal(observable.data.lastName)
     })
 
     observable.subscribe('fullName', val => {
-      expect(val).to.be.equal(observable.data.firstName + observable.data.lastName)
+      expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
       done()
     })
 

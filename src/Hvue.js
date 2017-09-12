@@ -20,7 +20,7 @@ Hvue.prototype._parseDOM = function (root) {
 Hvue.prototype._syncNode = function (node, property) {
   node.textContent = this.data[property]
   // We remove the `Seer.` as it is now available for us in our scope.
-  this._observableData.subscribe(property, value => node.textContent = value)
+  this._observableData.subscribe(property, value => node.textContent = this.data[property])
 }
 
 export default Hvue
