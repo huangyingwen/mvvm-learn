@@ -1,27 +1,17 @@
 import Observable from '../src/Observable'
 
-describe('Object.defineProperty 拦截', function(done) {
+describe('Observable', function (done) {
+  it('创建可观察属性', function (done) {
+    function Data(name, age) {
+      this.name = name
+      this.age = age
+    }
 
-  let observable
+    Data.prototype.kk = 'kkk'
 
-  function Data(name, age) {
-    this.name = name
-    this.age = age
-  }
+    let data = new Data('小胖子', '25')
+    let observable = new Observable(data)
 
-  Data.prototype.kk = 'kkk'
-
-  let data = new Data('小胖子', '25')
-  
-  beforeEach(function() {
-    observable = new Observable(data) 
-  })
-
-  it('observable.data.name 应该为 ‘小胖子’', function() {
-    expect(observable.data.name).to.be.equal('小胖子')
-  })
-  
-  it('修改 name 为 ‘黑胖子’，应该拦截到 name 改变成 ‘黑胖子’', function(done) {
     let name = '黑胖子'
 
     observable.subscribe('name', val => {
@@ -37,4 +27,35 @@ describe('Object.defineProperty 拦截', function(done) {
     observable.data.age = 30
   })
 
+  it('创建计算属性', function (done) {
+    let observable = new Observable({
+      firstName: '小',
+      lastName: '可爱',
+      fullName: function () {
+        return this.firstName + this.lastName
+      }
+    })
+    
+    expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
+    done()
+
+    let lastName = '胖子'
+
+    observable.subscribe('lastName', val => {
+      expect(val).to.be.equal(observable.data.lastName)
+    })
+
+    observable.subscribe('fullName', val => {
+      expect(val).to.be.equal(observable.data.firstName + observable.data.lastName)
+      done()
+    })
+
+    observable.data.lastName = lastName
+
+    expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
+
+    observable.data.fullName = '小可爱'
+
+    expect(observable.data.fullName).to.not.equal('小可爱')
+  })
 })
