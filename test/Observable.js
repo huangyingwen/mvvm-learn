@@ -82,4 +82,28 @@ describe('Observable', function (done) {
       done()
     })
   })
+
+  it('创建计算属性-计算属性依赖计算属性', function(done) {
+    let observable = new Observable({
+      a: 9,
+      b: 14,
+      c: 15,
+      d: function () {
+        return this.a + this.b
+      },
+      e: function() {
+        return this.c + this.d
+      }
+    })
+
+    let e = observable.data.e
+
+    observable.subscribe('e', () => {
+      expect(observable.data.d).to.be.equal(observable.data.a + observable.data.b)
+      expect(observable.data.e).to.be.equal(observable.data.c + observable.data.a + observable.data.b)
+      done()
+    })
+
+    observable.data.a = 10
+  })
 })

@@ -1,9 +1,10 @@
+import Depend from './Depend'
+
 function Observable(dataObj) {
   this._observers = []
   this.data = dataObj
   this._observableData(this.data)
-  this._dep = null
-  this._deps = {}
+  this._dep = new Depend()
 }
 
 Observable.prototype._observableData = function (obj) {
@@ -25,24 +26,15 @@ Observable.prototype._makeReactive = function (obj, key) {
 
   Object.defineProperty(obj, key, {
     get: function () {
-      if (self._dep && !deps.includes(self._dep)) {
-        deps.push(self._dep)
-      }
-
-      if (self._dep && !self._deps[self._dep].includes(key)) {
-        self._deps[self._dep].push(key)
-      }
-
+      deps = self._dep.depend(deps, key)
       return val
     },
     set: function (newVal) {
       val = newVal
       self._nodifyObservers(key)
 
-      deps.forEach(a => {
-        if (self._deps[a].includes(key)) {
-          self._nodifyObservers(a)
-        }
+      self._dep.getValidDeps(deps, key).forEach(a => {
+        self._nodifyObservers(a)
       })
     }
   })
@@ -51,19 +43,26 @@ Observable.prototype._makeReactive = function (obj, key) {
 Observable.prototype._makeComputed = function (obj, key) {
   let fun = obj[key]
   let self = this
-  let val
+  let val = null
+  let deps = []
 
-  self.subscribe(key, () => val = null)
+  self.subscribe(key, () => {
+    val = null
+
+    self._dep.getValidDeps(deps, key).forEach(a => {
+      self._nodifyObservers(a)
+    })
+  })
 
   Object.defineProperty(obj, key, {
     get: function () {
       if (val) return val
 
-      self._dep = key
-      self._deps[self._dep] = []
-
+      deps = self._dep.depend(deps, key)
+      self._dep.setTarget(key)
       val = fun.apply(self.data)
-      self._dep = null
+      self._dep.setTarget(null)
+
       return val
     },
     set: function () {
