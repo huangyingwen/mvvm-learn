@@ -9,6 +9,7 @@ describe('model binding view', function (done) {
     root.innerHTML = '\
       <div id="app">\
         <h1 s-text="title"></h1>\
+        <input type="text" id="title" placeholder="Enter title" s-model="title">\
       </div>'
 
     document.body.appendChild(root)
@@ -23,7 +24,7 @@ describe('model binding view', function (done) {
     })
   })
 
-  it('修改 model title 为 ‘黑胖子’，view h1 text 应该为 ‘黑胖子’', function (done) {
+  it('view s-text binding model', function (done) {
     expect(document.querySelector('h1').textContent).to.be.equal(App.data.title)
 
     App.data.title = '黑胖子'
@@ -31,5 +32,17 @@ describe('model binding view', function (done) {
       expect(document.querySelector('h1').textContent).to.be.equal(App.data.title)
       done()
     })
+  })
+
+  it('view s-model binding model', function(done){
+    let titleInput = document.getElementById('title')
+    expect(titleInput.value).to.be.equal(App.data.title)
+
+    titleInput.value = '小可爱'
+    titleInput.dispatchEvent(new Event('input'))
+
+    expect(titleInput.value).to.be.equal(App.data.title)
+    expect(App.data.title).to.be.equal('小可爱')
+    done()
   })
 })
