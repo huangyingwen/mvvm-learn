@@ -35,15 +35,13 @@ describe('Observable', function (done) {
         return this.firstName + this.lastName
       }
     })
-    
+
     expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
-    done()
+
+    observable.data.fullName = '猪猪'
+    expect(observable.data.fullName).to.not.equal('猪猪')
 
     let lastName = '胖子'
-
-    observable.subscribe('lastName', val => {
-      expect(observable.data.lastName).to.be.equal(observable.data.lastName)
-    })
 
     observable.subscribe('fullName', val => {
       expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
@@ -51,11 +49,37 @@ describe('Observable', function (done) {
     })
 
     observable.data.lastName = lastName
+  })
 
-    expect(observable.data.fullName).to.be.equal(observable.data.firstName + observable.data.lastName)
+  it('创建计算属性-去除无用的依赖', function (done) {
+    let observable = new Observable({
+      a: 9,
+      b: 14,
+      c: function () {
+        if (this.a > 10) {
+          return this.a
+        } else {
+          return this.b
+        }
+      }
+    })
 
-    observable.data.fullName = '小可爱'
+    let c = observable.data.c
+    observable.data.a = 11
+    c = observable.data.c
+    
+    let hasDepends = false
 
-    expect(observable.data.fullName).to.not.equal('小可爱')
+    observable.subscribe('c', () => {
+      hasDepends = true
+    })
+
+    observable.data.b = 20
+
+    setTimeout(() => {
+      expect(observable.data.c).to.be.equal(observable.data.a)
+      expect(hasDepends).to.be.false
+      done()
+    })
   })
 })

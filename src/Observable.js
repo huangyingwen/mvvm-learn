@@ -3,6 +3,7 @@ function Observable(dataObj) {
   this.data = dataObj
   this._observableData(this.data)
   this._dep = null
+  this._deps = {}
 }
 
 Observable.prototype._observableData = function (obj) {
@@ -24,7 +25,14 @@ Observable.prototype._makeReactive = function (obj, key) {
 
   Object.defineProperty(obj, key, {
     get: function () {
-      if (this._dep && !deps.includes(this._dep)) deps.push(this._dep)
+      if (self._dep && !deps.includes(self._dep)) {
+        deps.push(self._dep)
+      }
+
+      if (self._dep && !self._deps[self._dep].includes(key)) {
+        self._deps[self._dep].push(key)
+      }
+
       return val
     },
     set: function (newVal) {
@@ -32,7 +40,9 @@ Observable.prototype._makeReactive = function (obj, key) {
       self._nodifyObservers(key)
 
       deps.forEach(a => {
-        self._nodifyObservers(a)
+        if (self._deps[a].includes(key)) {
+          self._nodifyObservers(a)
+        }
       })
     }
   })
@@ -49,9 +59,11 @@ Observable.prototype._makeComputed = function (obj, key) {
     get: function () {
       if (val) return val
 
-      this._dep = key
+      self._dep = key
+      self._deps[self._dep] = []
+
       val = fun.apply(self.data)
-      this._dep = null
+      self._dep = null
       return val
     },
     set: function () {
