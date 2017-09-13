@@ -1,7 +1,7 @@
 import Observable from './Observable'
 
 function Hvue(options) {
-  this._observable = new Observable(Object.assign({}, options.data, options.computed))
+  this._observable = new Observable(options)
   this.data = this._observable.data
   this.el = options.el
   this.root = document.querySelector(this.el)

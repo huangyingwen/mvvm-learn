@@ -7,10 +7,10 @@ describe('Observable', function (done) {
       this.age = age
     }
 
-    Data.prototype.kk = 'kkk'
-
     let data = new Data('小胖子', '25')
-    let observable = new Observable(data)
+    let observable = new Observable({
+      data
+    })
 
     let name = '黑胖子'
 
@@ -29,10 +29,14 @@ describe('Observable', function (done) {
 
   it('创建计算属性', function (done) {
     let observable = new Observable({
-      firstName: '小',
-      lastName: '可爱',
-      fullName: function () {
-        return this.firstName + this.lastName
+      data: {
+        firstName: '小',
+        lastName: '可爱'
+      },
+      computed: {
+        fullName: function () {
+          return this.firstName + this.lastName
+        }
       }
     })
 
@@ -53,13 +57,17 @@ describe('Observable', function (done) {
 
   it('创建计算属性-去除无用的依赖', function (done) {
     let observable = new Observable({
-      a: 9,
-      b: 14,
-      c: function () {
-        if (this.a > 10) {
-          return this.a
-        } else {
-          return this.b
+      data: {
+        a: 9,
+        b: 14
+      },
+      computed: {
+        c: function () {
+          if (this.a > 10) {
+            return this.a
+          } else {
+            return this.b
+          }
         }
       }
     })
@@ -67,7 +75,7 @@ describe('Observable', function (done) {
     let c = observable.data.c
     observable.data.a = 11
     c = observable.data.c
-    
+
     let hasDepends = false
 
     observable.subscribe('c', () => {
@@ -83,16 +91,20 @@ describe('Observable', function (done) {
     })
   })
 
-  it('创建计算属性-计算属性依赖计算属性', function(done) {
+  it('创建计算属性-计算属性依赖计算属性', function (done) {
     let observable = new Observable({
-      a: 9,
-      b: 14,
-      c: 15,
-      d: function () {
-        return this.a + this.b
+      data: {
+        a: 9,
+        b: 14,
+        c: 15
       },
-      e: function() {
-        return this.c + this.d
+      computed: {
+        d: function () {
+          return this.a + this.b
+        },
+        e: function () {
+          return this.c + this.d
+        }
       }
     })
 
@@ -102,6 +114,36 @@ describe('Observable', function (done) {
       expect(observable.data.d).to.be.equal(observable.data.a + observable.data.b)
       expect(observable.data.e).to.be.equal(observable.data.c + observable.data.a + observable.data.b)
       done()
+    })
+
+    observable.data.a = 10
+  })
+
+  it('创建观察属性', function (done) {
+    function Watch() {
+      this.a = function () {
+        this.data.b = 17
+        expect(observable.data.b).to.be.equal(17)
+        done()
+      }
+
+      this.a1 = function() {
+
+      }
+
+      this.k = 1
+    }
+
+    Watch.prototype.b = function() {
+
+    }
+
+    let observable = new Observable({
+      data: {
+        a: 9,
+        b: 14
+      },
+      watch: new Watch()
     })
 
     observable.data.a = 10

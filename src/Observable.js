@@ -1,10 +1,11 @@
 import Depend from './Depend'
 
-function Observable(dataObj) {
+function Observable(options) {
   this._observers = []
-  this.data = dataObj
-  this._observableData(this.data)
   this._dep = new Depend()
+  this.data = Object.assign({}, options.data, options.computed)
+  this._observableData(this.data)
+  this._subscribeWatchers(options.watch)
 }
 
 Observable.prototype._observableData = function (obj) {
@@ -75,6 +76,18 @@ Observable.prototype._nodifyObservers = function (property) {
   if (!this._observers[property] || this._observers[property].length <= 0) return
 
   this._observers[property].forEach(handler => handler())
+}
+
+Observable.prototype._subscribeWatchers = function(watchers) {
+  if (!watchers) return
+  for (let key in watchers) {
+    if (!this.data[key]) return
+    if (watchers.hasOwnProperty(key) && typeof watchers[key] === 'function') {
+      // We use Function.prototype.bind to bind our data model
+      // as the new `this` context for our signal handler
+      this.subscribe(key, watchers[key].bind(this))
+    }
+  }
 }
 
 Observable.prototype.subscribe = function (property, handler) {
