@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>observable-objects-rxjs</title>
+</head>
+
+<body>
+  <div id="app">
+    <h1 s-text="title"></h1>
+    <h2 s-text="fullName"></h2>
+    <h3 s-text="fullNameLength"></h3>
+    <h3 s-text="firstName"></h3>
+    <h3 s-text="lastName"></h3>
+    <div class="form-inline">
+      <div class="form-group">
+        <label for="title">Title: </label>
+        <input type="text" class="form-control" id="title" placeholder="Enter title" s-model="title">
+      </div>
+      <div class="form-group">
+        <label for="firstName">firstName: </label>
+        <input type="text" class="form-control" id="firstName" placeholder="Enter title" s-model="firstName">
+      </div>
+      <div class="form-group">
+        <label for="lastName">lastName: </label>
+        <input type="text" class="form-control" id="lastName" placeholder="Enter title" s-model="lastName">
+      </div>
+      <button class="btn btn-default" type="button" onclick="resetTitle()">Reset title</button>
+    </div>
+  </div>
+
+  <script src="../dist/hvue.js"></script>
+  <script src="./index.js"></script>
+</body>
+
+</html>

@@ -2,18 +2,31 @@
   "name": "mvvm-learn",
   "version": "1.0.0",
   "description": "mvvm 学习",
-  "main": "index.js",
+  "main": "dist/hvue.common.js",
+  "module": "dist/hvue.esm.js",
+  "unpkg": "dist/hvue.js",
   "scripts": {
-    "test": "karma start --single-run"
+    "test": "karma start --single-run",
+    "build": "rollup -c",
+    "dev": "rollup -c -w --sourcemap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/huangyingwen/mvvm-learn.git"
+  },
+  "bugs": {
+    "url": "https://github.com/huangyingwen/mvvm-learn/issues"
   },
   "author": "huangyw <hyw.huangyingwen@gmail.com> (http://www.cnblogs.com/huangyingwen/)",
   "license": "MIT",
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-external-helpers": "^6.22.0",
     "babel-plugin-istanbul": "^4.1.4",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
+    "babel-preset-latest": "^6.24.1",
     "chai": "^4.1.2",
     "karma": "^1.7.1",
     "karma-chai": "^0.1.0",
@@ -25,7 +38,13 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webpack": "^2.0.4",
     "mocha": "^3.5.0",
+    "rollup": "^0.49.3",
+    "rollup-plugin-babel": "^3.0.2",
+    "rollup-plugin-license": "^0.5.0",
+    "rollup-plugin-uglify": "^2.0.1",
+    "rollup-watch": "^4.3.1",
     "sourcemap-istanbul-instrumenter-loader": "^0.2.0",
+    "uglify-js-harmony": "^2.7.7",
     "webpack": "^3.5.6"
   }
 }
